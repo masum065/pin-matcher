@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id="pin-output" value="" class="form-control" type="text" readonly>
+                    <button id="generate-pin" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input id="number-output" class="form-control" type="text">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div class="calc-button-row">
+                              <div class="button number">7</div>
+                              <div class="button number">8</div>
+                              <div class="button number">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button number">4</div>
+                              <div class="button number">5</div>
+                              <div class="button number">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button number">1</div>
+                              <div class="button number">2</div>
+                              <div class="button number">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div class="button operator" id="backspace"><</div>
+                                <div class="button number">0</div>
+                                <div class="button operator" id="clear">C</div>
+                            </div>
+                            <div>
+                                <button type="submit" id="submit-number" class="submit-btn">Submit</button>
+                                <p class="action-left"><span id="try-left">3</span> try left</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notify-section">
+            <p class="notify" id="pin-deined">❌ Pin Didn't Match, Please try again</p>
+            <p class="notify" id="pin-accepted">✅ Pin Matched... Secret door is opening for you</p>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+        // Get output Function
+        function getOutput(idName){
+            return document.getElementById(idName).value;
+        }
+
+        // Print output Function
+        function printOutput(number, idName){
+                document.getElementById(idName).value = number;
+            }
+
+            // Random Pin Generator
+        document.getElementById('generate-pin')
+        .addEventListener('click',function(){
+            let generatorPin = Math.round((Math.random() * 9000) + 1000);
+            printOutput(generatorPin,'pin-output');
+        })
+
+
+        // handle number event
+       let number = document.getElementsByClassName('number');
+
+        for(i=0; i<number.length; i++){
+            number[i].addEventListener('click',function(e){
+
+            let currentNumber = getOutput('number-output');
+            let outputNumber  = currentNumber + e.target.innerText;
+            printOutput(outputNumber,'number-output');
+            });
+        }
+
+
+        // handle click operator event
+        let operator = document.getElementsByClassName('operator');
+
+        for(i=0; i<operator.length; i++){
+            operator[i].addEventListener('click',function(e){
+                
+                if(this.id == 'backspace'){
+                    let output = getOutput('number-output');
+
+                    if(output){
+                        output = output.substr(0, output.length-1)
+                        printOutput(output,'number-output');
+                    }
+                }
+
+                if(this.id == 'clear'){
+                    let output = getOutput('number-output');
+                    output = '';
+                    printOutput(output,'number-output');
+                    
+                }
+
+            })
+        }
+
+
+        // Submit Number
+        document.getElementById('submit-number')
+        .addEventListener('click',function(evnet) {
+           let matching;
+
+           if(getOutput('pin-output') != '' && getOutput('number-output') != ''){
+            matching = getOutput('pin-output') === getOutput('number-output')
+           }
+
+
+           if(!matching){
+
+                if(pinAccepted('block')){
+                    pinAccepted('none')
+                }
+                pinDeined('block')
+
+                let tryLeftData = document.getElementById('try-left').innerHTML;
+                let tryLeftNumber = parseInt(tryLeftData);
+                let tryLeft = tryLeftNumber - 1;
+                document.getElementById('try-left').innerHTML = tryLeft;
+                if(tryLeft === 0){
+                    setButtonDisable()
+                }
+           }
+
+           if(matching){
+               
+                if(pinDeined('block')){
+                    pinDeined('none');
+                }
+                    pinAccepted('block');
+                
+                // setButtonDisable()  
+           }
+
+            // pin Denied Function
+           function pinDeined(proparty){
+            return document.getElementById('pin-deined').style.display = proparty;
+           } 
+           // Pin Accepted Function
+           function pinAccepted(proparty){
+            return document.getElementById('pin-accepted').style.display = proparty;
+           } 
+            // Set Button Disable Function
+           function setButtonDisable(){
+            return document.getElementById('submit-number').setAttribute('disabled','true');
+           }
+        })
+
+    
+    </script>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+<script>
+
+
+    function getOutput(idName, data){
+        return document.getElementById(idName).data;
+    }
+    function getOutputNumber(){
+        return document.getElementById('number-output').value;
+    }
+    
+    function printPinOutput(number, idName){
+            document.getElementById(idName).value = number;
+        }
+
+    function getFormatedNumber(num){
+    let value = Number(num);
+    return value;
+    }
+
+    document.querySelector('.generate-btn')
+    .addEventListener('click',function(){
+        let generatorPin = Math.round((Math.random() * 9000) + 1000);
+         printPinOutput(generatorPin,'pin-output');
+    })
+
+
+
+   let number = document.getElementsByClassName('number');
+
+    for(i=0; i<number.length; i++){
+        number[i].addEventListener('click',function(e){
+
+        let currentNumber = getOutputNumber();
+        let outputNumber  = currentNumber + e.target.innerText;
+        document.getElementById('number-output').value = outputNumber;
+  
+        })
+    }
+
+
+
+    let operator = document.getElementsByClassName('operator');
+
+    for(i=0; i<operator.length; i++){
+        operator[i].addEventListener('click',function(e){
+            
+            if(this.id == 'backspace'){
+                let output = document.getElementById('number-output').value;
+
+                if(output){
+                    output = output.substr(0, output.length-1)
+                    document.getElementById('number-output').value = output;
+                }
+            }
+
+        })
+    }
+
+    
+</script> -->
